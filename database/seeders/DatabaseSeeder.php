@@ -20,8 +20,8 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\User::factory()->create([
             'name' => 'Pedro Henrique Pereira',
-            'email' => 'pedro.pereira@unicasamoveis.com.br',
-            'password' => Hash::make('ut$AL937'),
+            'email' => 'pedro23henrique@hotmail.com',
+            'password' => Hash::make('123'),
         ]);
 
         \App\Models\Movie::factory()->create([
