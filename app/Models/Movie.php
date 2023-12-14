@@ -15,4 +15,9 @@ class Movie extends Model
         'description',
         'release_date'
     ];
+
+    public function genries()
+    {
+        return $this->belongsToMany(Genrie::class, 'movie_genre', 'movie_id','genre_id');
+    }
 }

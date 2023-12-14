@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\MovieResource;
 use App\Traits\HttpResponses;
+use Exception;
 use Illuminate\Support\Facades\Validator;
 
 class MovieController extends Controller
@@ -17,7 +18,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        return MovieResource::collection(Movie::all());
+        return MovieResource::collection(Movie::with('movie_genre')->get());
     }
 
     /**
@@ -35,22 +36,34 @@ class MovieController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'title' => 'required',
-                'description' => 'max:255',
-                'release_date' => 'required|date_format:Y-m-d'
+                'genre_id'      => 'required|array',
+                'title'         => 'required',
+                'description'   => 'max:255',
+                'release_date'  => 'required|date_format:Y-m-d'
                 // 'value' => 'required|numeric|between:1,5'
             ]);
 
             if ($validator->fails()) {
-                // return response()->json(['message' => 'error'], 422);
                 return $this->error('Data invalid', 422, $validator->errors(),  $validator->getData());
             }
 
             $create = Movie::create($validator->validate());
 
+            $movie = Movie::find($create->id);
+
+            if (!is_array($validator->attributes()['genre_id'])) throw new Exception('Variable genre_id is not an array');
+
+            //sync aceita um array de ids para fazer o vinculo many to many
+            $movie->genries()->sync($validator->attributes()['genre_id']);
+
+            // foreach ($validator->attributes()['genre_id'] as $value) {
+            //     $movie->genries()->attach($value);
+            // }
+
             if ($create) {
-                return $this->response('Movie created', 200, $create);
+                return $this->response('Movie created', 200, new MovieResource($create->load('genries')));
             }
+
             return $this->error('Movie not created', 400);
         } catch (\Exception $e) {
             return $this->error('Movie not created', 500, (array)$e->getMessage());
@@ -62,7 +75,7 @@ class MovieController extends Controller
      */
     public function show(string $id)
     {
-        return new MovieResource(Movie::where('id', $id)->first());
+        return new MovieResource(Movie::where('id', $id)->with('genries')->first());
     }
 
     /**
@@ -80,6 +93,7 @@ class MovieController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'genre_id'      => 'required|array',
                 'title'         => 'required',
                 'description'   => 'max:255',
                 'release_date'  => 'required|date_format:Y-m-d'
@@ -92,6 +106,8 @@ class MovieController extends Controller
 
             $validated = $validator->validate();
 
+            if (!is_array($validated['genre_id'])) throw new Exception('Variable genre_id is not an array');
+
             $movie = Movie::findOrFail($id);
 
             $updated = $movie->update([
@@ -101,6 +117,8 @@ class MovieController extends Controller
             ]);
 
             if ($updated) {
+                $movie->genries()->detach($validated['genre_id']);
+                $movie->genries()->sync($validated['genre_id']);
                 return $this->response('Movie updated', 200, $movie);
             }
 
@@ -116,7 +134,7 @@ class MovieController extends Controller
     public function destroy(string $id)
     {
         try {
-            
+
 
             $movie = Movie::findOrFail($id);
 
