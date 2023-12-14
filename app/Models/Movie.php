@@ -20,4 +20,9 @@ class Movie extends Model
     {
         return $this->belongsToMany(Genrie::class, 'movie_genre', 'movie_id','genre_id');
     }
+
+    public function getMovie($id)       
+    {
+       return $this->where('id', $id)->first();
+    }
 }

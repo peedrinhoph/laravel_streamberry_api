@@ -18,7 +18,8 @@ class MovieController extends Controller
      */
     public function index()
     {
-        return MovieResource::collection(Movie::with('movie_genre')->get());
+        return MovieResource::collection(Movie::get());
+        // return MovieResource::collection(Movie::with('movie_genre')->get());
     }
 
     /**
@@ -75,7 +76,18 @@ class MovieController extends Controller
      */
     public function show(string $id)
     {
-        return new MovieResource(Movie::where('id', $id)->with('genries')->first());
+        try {
+            $Movie = new Movie();
+            $result = $Movie->getMovie($id);
+
+            if (empty($result)) {
+                return $this->response('No queries result', 200);
+            }
+            // $movie = Movie::where('id', $id)->first();
+            return new MovieResource($result);
+        } catch (\Exception $e) {
+            return $this->error('Error', 500, (array)$e->getMessage());
+        }
     }
 
     /**
@@ -137,7 +149,7 @@ class MovieController extends Controller
 
 
             $movie = Movie::findOrFail($id);
-
+            $movie->genries()->detach();
             $deleted = $movie->delete();
 
             if ($deleted) {

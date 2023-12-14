@@ -16,9 +16,9 @@ class MovieResource extends JsonResource
     public function toArray(Request $request): array
     {
         // return parent::toArray($request);
-        foreach ($this->genries as $genre) {
-            $genre->description;
-        }
+        // foreach ($this->genries as $genre) {
+        //     $genre->description;
+        // }
 
         return [
             'title'         => $this->title,
@@ -26,7 +26,7 @@ class MovieResource extends JsonResource
             'month'         => Carbon::parse($this->release_date)->format('m'),
             'year'          => Carbon::parse($this->release_date)->format('Y'),
             'since'         => Carbon::parse($this->release_date)->diffForHumans(),
-            'genries'       =>  $this->genries
+            'genries'       =>  $this::genries()->get()
         ];
     }
 }
