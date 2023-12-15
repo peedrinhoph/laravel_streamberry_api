@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('comment')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
+            $table->unsignedBigInteger('movie_id');
+            $table->foreign('movie_id')->references('id')->on('movies');
             $table->unsignedBigInteger('streaming_movie_id');
             $table->foreign('streaming_movie_id')->references('id')->on('streaming_movies');
             $table->timestamps();

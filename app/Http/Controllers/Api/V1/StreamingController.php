@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Request\StreamingStoreRequest;
 use App\Http\Resources\V1\StreamingResource;
+use App\Repositories\StreamingRepository;
 
 class StreamingController extends Controller
 {
@@ -33,16 +34,16 @@ class StreamingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, StreamingRepository $streamingRepository)
     {
         try {
 
-            $movie = $request->only([
+            $streaming = $request->only([
                 'name'
             ]);
 
             $validator = Validator::make(
-                $movie,
+                $streaming,
                 $this->streamingStoreRequest->rules(),
                 $this->streamingStoreRequest->messages()
             );
@@ -81,18 +82,10 @@ class StreamingController extends Controller
                 return $this->response('No queries result', 201);
             }
 
-            return new StreamingResource($result);
+            return new StreamingResource($result->loadMissing(['movies']));
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
@@ -127,7 +120,7 @@ class StreamingController extends Controller
             if (!$result) return $this->error("No query results for params {$id}.", 202);
 
             $updated = $result->update([
-                'name'   => $validate['name']
+                'name'   => data_get($validate, 'name')
             ]);
 
             if ($updated) {

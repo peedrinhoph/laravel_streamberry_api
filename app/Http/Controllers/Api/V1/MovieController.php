@@ -10,6 +10,7 @@ use App\Traits\HttpResponses;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Request\MovieStoreRequest;
+use App\Models\MovieRating;
 
 class MovieController extends Controller
 {
@@ -28,18 +29,10 @@ class MovieController extends Controller
     {
         $pageSize = $request->page_size ?? 25;
 
-        $movies = Movie::with(['genries']);
-        return MovieResource::collection($movies->paginate($pageSize))->response();
-        // return MovieResource::collection(Movie::query()->paginate($pageSize));
-        // return MovieResource::collection(Movie::with('movie_genre')->get());
-    }
+        $movies = Movie::with(['genries', 'vote']);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(Request $request)
-    {
-        return $request->all();
+        return MovieResource::collection($movies->paginate($pageSize));
+        // return MovieResource::collection(Movie::with('movie_genre')->get());
     }
 
     /**
@@ -82,21 +75,23 @@ class MovieController extends Controller
 
             $create = Movie::create($validator->validate());
 
-            $movie = Movie::find($create->id);
+            // $movie = Movie::find($create->id);
 
-            if (!is_array($validator->attributes()['genre_ids'])) throw new Exception('genre_ids is not an array');
+            // if (!is_array($validator->attributes()['genre_ids'])) throw new Exception('genre_ids is not an array');
 
-            $movie->genries()->sync($validator->attributes()['genre_ids']);
+            // $movie->genries()->sync($validator->attributes()['genre_ids']);
 
             // // foreach ($validator->attributes()['genre_id'] as $value) {
             // //     $movie->genries()->attach($value);
             // // }
 
-            if ($create) {
-                return $this->response('Movie created', 201, new MovieResource($create->load('genries')));
+            if (!$create) return $this->error('Movie not created', 202);
+
+            if ($genreIds = data_get($validator->attributes(), 'genre_ids')) {
+                $create->genries()->sync($genreIds);
             }
 
-            return $this->error('Movie not created', 202);
+            return $this->response('Movie created', 201, new MovieResource($create->load('genries')));
         } catch (\Exception $e) {
             return $this->error('Movie not created', 500, (array)$e->getMessage());
         }
@@ -109,13 +104,16 @@ class MovieController extends Controller
     {
         try {
             $Movie = new Movie();
+            $Vote = new MovieRating();
+            
             $result = $Movie->getMovie($id);
+            $result['vote_average'] = $Vote->vote_average($id);
 
             if (empty($result)) {
                 return $this->response('No queries result', 201);
             }
 
-            return new MovieResource($result->loadMissing(['genries']));
+            return new MovieResource($result->loadMissing(['genries', 'vote']));
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }
@@ -149,29 +147,26 @@ class MovieController extends Controller
                     $validator->getData()
                 );
             }
-            $validate = $validator->validate();
 
-            if (!is_array($validate['genre_ids'])) throw new Exception('Variable genre_ids is not an array');
+            $validate = $validator->validate();
 
             $Movie = new Movie();
             $result = $Movie->getMovie($id);
-            // dd(!$result);
 
             if (!$result) return $this->error("No query results for params {$id}.", 202);
 
             $updated = $result->update([
-                'title'         => $validate['title'],
-                'description'   => $validate['description'],
-                'release_date'  => $validate['release_date']
+                'title'         => data_get($validate, 'title'),
+                'description'   => data_get($validate, 'description'),
+                'release_date'  => data_get($validate, 'release_date')
             ]);
 
-            if ($updated) {
-                $result->genries()->detach($validate['genre_ids']);
-                $result->genries()->sync($validate['genre_ids']);
-                return $this->response('Movie updated', 200, $result);
-            }
+            if (!$updated) return $this->error('Movie not updated', 202);
 
-            return $this->error('Movie not updated', 202);
+            if ($genreIds = data_get($validate, 'genre_ids')) {
+                $result->genries()->sync($genreIds);
+            }
+            return $this->response('Movie updated', 200, $result);
         } catch (\Exception $e) {
             return $this->error('Movie not updated', 500, (array)$e->getMessage());
         }

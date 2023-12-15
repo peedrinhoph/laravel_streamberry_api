@@ -15,19 +15,27 @@ class MovieResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // return parent::toArray($request);
-        // foreach ($this->genries as $genre) {
-        //     $genre->description;
-        // }
 
+        // $vote_average = MovieRatingResource::collection($this->whenLoaded('vote'));
+        // dd($vote_average->items());
+        // foreach ($vote_average as $value) {
+        //     var_dump($value);
+        // }
+        // dd('here');
+        
         return [
-            'title'         => $this->title,
-            'description'   => $this->description,
-            'month'         => Carbon::parse($this->release_date)->format('m'),
-            'year'          => Carbon::parse($this->release_date)->format('Y'),
-            'since'         => Carbon::parse($this->release_date)->diffForHumans(),
-            // 'genries'       =>  $this::genries()->get()
-            'genries'       =>  GenrieResource::collection($this->whenLoaded('genries')),
+            'movie' => [
+                'title'         => $this->title,
+                'description'   => $this->description,
+                'month'         => Carbon::parse($this->release_date)->format('m'),
+                'year'          => Carbon::parse($this->release_date)->format('Y'),
+                'since'         => Carbon::parse($this->release_date)->diffForHumans(),
+                'vote_average'  => $this->vote_average ?? 0
+            ],
+
+            'genries'       => GenrieResource::collection($this->whenLoaded('genries')),
+            'streamings'    => StreamingResource::collection($this->whenLoaded('streamings')),
+            'vote'          => MovieRatingResource::collection($this->whenLoaded('vote')),
         ];
     }
 }

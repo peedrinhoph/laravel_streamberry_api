@@ -85,9 +85,9 @@ class DatabaseSeeder extends Seeder
         \App\Models\StreamingMovie::factory()->create(['movie_id' => '5', 'streaming_id' => '2']);
 
 
-        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '1', 'user_id' => '1', 'value' => '5', 'comment' => 'Muito bom']);
-        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '2', 'user_id' => '1', 'value' => '3', 'comment' => 'Bom']);
-        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '4', 'user_id' => '1', 'value' => '5', 'comment' => 'Muito bom']);
-        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '5', 'user_id' => '1', 'value' => '3', 'comment' => 'Bom']);
+        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '1', 'movie_id' => '1', 'user_id' => '1', 'value' => '5', 'comment' => 'Muito bom']);
+        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '2', 'movie_id' => '1', 'user_id' => '1', 'value' => '3', 'comment' => 'Bom']);
+        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '4', 'movie_id' => '3', 'user_id' => '1', 'value' => '5', 'comment' => 'Muito bom']);
+        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '5', 'movie_id' => '4', 'user_id' => '1', 'value' => '3', 'comment' => 'Bom']);
     }
 }

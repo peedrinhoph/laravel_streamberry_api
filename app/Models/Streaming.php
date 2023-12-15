@@ -19,8 +19,18 @@ class Streaming extends Model
         'updated_at',
     ];
 
+    public function movies()
+    {
+        return $this->belongsToMany(
+            Movie::class,
+            'streaming_movies',
+            'streaming_id',
+            'movie_id'
+        );
+    }
+
     public function getStreaming($id)
     {
-        return $this->where('id', $id)->first();
+        return $this->find($id);
     }
 }

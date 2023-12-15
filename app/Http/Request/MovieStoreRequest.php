@@ -14,8 +14,7 @@ class MovieStoreRequest extends FormRequest
             'description' => 'max:255',
             'release_date'  => 'required|date_format:Y-m-d',
             'genre_ids' => [
-                'array',
-                'required'
+                'array'
             ]
         ];
     }

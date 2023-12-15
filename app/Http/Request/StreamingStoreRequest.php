@@ -10,7 +10,7 @@ class StreamingStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'max:50|unique:streamings',
+            'name' => 'required|max:50|unique:streamings',
         ];
     }
 

@@ -8,4 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class StreamingMovie extends Model
 {
     use HasFactory;
+    protected $table = 'streaming_movies';
 }
