@@ -18,4 +18,14 @@ class Genrie extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function movies()
+    {
+        return $this->belongsToMany(Movie::class, 'movie_genre', 'genre_id', 'movie_id');
+    }
+
+    public function getGenre($id)
+    {
+        return $this->where('id', $id)->first();
+    }
 }

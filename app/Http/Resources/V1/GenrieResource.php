@@ -8,6 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class GenrieResource extends JsonResource
 {
+
     /**
      * Transform the resource into an array.
      *
@@ -15,13 +16,10 @@ class GenrieResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $movie = $this->whenLoaded('movie');
 
         return [
-            'id' => $this->id,
-            'description' => $this->description,
-            'movie' => new MovieResource($movie),
-
+            'id'            => $this->id,
+            'description'   => $this->description,
         ];
     }
 }
