@@ -26,7 +26,8 @@ class MovieResource extends JsonResource
             'month'         => Carbon::parse($this->release_date)->format('m'),
             'year'          => Carbon::parse($this->release_date)->format('Y'),
             'since'         => Carbon::parse($this->release_date)->diffForHumans(),
-            'genries'       =>  $this::genries()->get()
+            // 'genries'       =>  $this::genries()->get()
+            'genries'       =>  GenrieResource::collection($this->whenLoaded('genries')),
         ];
     }
 }

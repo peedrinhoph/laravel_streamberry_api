@@ -9,6 +9,7 @@ use App\Http\Resources\V1\MovieResource;
 use App\Traits\HttpResponses;
 use Exception;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Request\MovieStoreRequest;
 
 class MovieController extends Controller
 {
@@ -16,9 +17,20 @@ class MovieController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    private MovieStoreRequest $movieStoreRequest;
+
+    public function __construct()
     {
-        return MovieResource::collection(Movie::get());
+        $this->movieStoreRequest = new MovieStoreRequest();
+    }
+
+    public function index(Request $request)
+    {
+        $pageSize = $request->page_size ?? 25;
+
+        $movies = Movie::with(['genries']);
+        return MovieResource::collection($movies->paginate($pageSize))->response();
+        // return MovieResource::collection(Movie::query()->paginate($pageSize));
         // return MovieResource::collection(Movie::with('movie_genre')->get());
     }
 
@@ -36,36 +48,55 @@ class MovieController extends Controller
     public function store(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'genre_id'      => 'required|array',
-                'title'         => 'required',
-                'description'   => 'max:255',
-                'release_date'  => 'required|date_format:Y-m-d'
-                // 'value' => 'required|numeric|between:1,5'
+
+            $movie = $request->only([
+                'genre_id',
+                'title',
+                'description',
+                'release_date',
+                'genre_ids'
             ]);
 
+            $validator = Validator::make(
+                $movie,
+                $this->movieStoreRequest->rules(),
+                $this->movieStoreRequest->messages()
+            );
+
+            // $validator = Validator::make($request->all(), [
+            //     'genre_id'      => 'required|array',
+            //     'title'         => 'required',
+            //     'description'   => 'max:255',
+            //     'release_date'  => 'required|date_format:Y-m-d'
+            //     // 'value' => 'required|numeric|between:1,5'
+            // ]);
+
             if ($validator->fails()) {
-                return $this->error('Data invalid', 422, $validator->errors(),  $validator->getData());
+                return $this->error(
+                    'Please verify this errors',
+                    422,
+                    $validator->errors(),
+                    $validator->getData()
+                );
             }
 
             $create = Movie::create($validator->validate());
 
             $movie = Movie::find($create->id);
 
-            if (!is_array($validator->attributes()['genre_id'])) throw new Exception('Variable genre_id is not an array');
+            if (!is_array($validator->attributes()['genre_ids'])) throw new Exception('genre_ids is not an array');
 
-            //sync aceita um array de ids para fazer o vinculo many to many
-            $movie->genries()->sync($validator->attributes()['genre_id']);
+            $movie->genries()->sync($validator->attributes()['genre_ids']);
 
-            // foreach ($validator->attributes()['genre_id'] as $value) {
-            //     $movie->genries()->attach($value);
-            // }
+            // // foreach ($validator->attributes()['genre_id'] as $value) {
+            // //     $movie->genries()->attach($value);
+            // // }
 
             if ($create) {
-                return $this->response('Movie created', 200, new MovieResource($create->load('genries')));
+                return $this->response('Movie created', 201, new MovieResource($create->load('genries')));
             }
 
-            return $this->error('Movie not created', 400);
+            return $this->error('Movie not created', 202);
         } catch (\Exception $e) {
             return $this->error('Movie not created', 500, (array)$e->getMessage());
         }
@@ -81,10 +112,10 @@ class MovieController extends Controller
             $result = $Movie->getMovie($id);
 
             if (empty($result)) {
-                return $this->response('No queries result', 200);
+                return $this->response('No queries result', 201);
             }
-            // $movie = Movie::where('id', $id)->first();
-            return new MovieResource($result);
+
+            return new MovieResource($result->loadMissing(['genries']));
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }
@@ -104,37 +135,51 @@ class MovieController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'genre_id'      => 'required|array',
-                'title'         => 'required',
-                'description'   => 'max:255',
-                'release_date'  => 'required|date_format:Y-m-d'
+            $movie = $request->only([
+                'genre_id',
+                'title',
+                'description',
+                'release_date',
+                'genre_ids'
             ]);
 
+            $validator = Validator::make(
+                $movie,
+                $this->movieStoreRequest->rules(),
+                $this->movieStoreRequest->messages()
+            );
+
             if ($validator->fails()) {
-                // return response()->json(['message' => 'error'], 422);
-                return $this->error('Data invalid', 422, $validator->errors(),  $validator->getData());
+                return $this->error(
+                    'Data invalid',
+                    422,
+                    $validator->errors(),
+                    $validator->getData()
+                );
             }
+            $validate = $validator->validate();
 
-            $validated = $validator->validate();
+            if (!is_array($validate['genre_ids'])) throw new Exception('Variable genre_ids is not an array');
 
-            if (!is_array($validated['genre_id'])) throw new Exception('Variable genre_id is not an array');
+            $Movie = new Movie();
+            $result = $Movie->getMovie($id);
+            // dd(!$result);
 
-            $movie = Movie::findOrFail($id);
+            if (!$result) return $this->error("No query results for params {$id}.", 202);
 
-            $updated = $movie->update([
-                'title'         => $validated['title'],
-                'description'   => $validated['description'],
-                'release_date'  => $validated['release_date']
+            $updated = $result->update([
+                'title'         => $validate['title'],
+                'description'   => $validate['description'],
+                'release_date'  => $validate['release_date']
             ]);
 
             if ($updated) {
-                $movie->genries()->detach($validated['genre_id']);
-                $movie->genries()->sync($validated['genre_id']);
-                return $this->response('Movie updated', 200, $movie);
+                $result->genries()->detach($validate['genre_ids']);
+                $result->genries()->sync($validate['genre_ids']);
+                return $this->response('Movie updated', 200, $result);
             }
 
-            return $this->error('Movie not updated', 400);
+            return $this->error('Movie not updated', 202);
         } catch (\Exception $e) {
             return $this->error('Movie not updated', 500, (array)$e->getMessage());
         }
@@ -148,15 +193,19 @@ class MovieController extends Controller
         try {
 
 
-            $movie = Movie::findOrFail($id);
-            $movie->genries()->detach();
-            $deleted = $movie->delete();
+            $Movie = new Movie();
+            $result = $Movie->getMovie($id);
+
+            if (!$result) return $this->error("No query results for params {$id}.", 202);
+
+            $result->genries()->detach();
+            $deleted = $result->delete();
 
             if ($deleted) {
-                return $this->response('Movie deleted', 200, $movie);
+                return $this->response('Movie deleted', 200, $result);
             }
 
-            return $this->error('Movie not deleted', 400);
+            return $this->error('Movie not deleted', 202);
         } catch (\Exception $e) {
             return $this->error('Movie not deleted', 500, (array)$e->getMessage());
         }
