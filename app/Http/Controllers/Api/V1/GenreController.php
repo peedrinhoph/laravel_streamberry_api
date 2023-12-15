@@ -89,7 +89,7 @@ class GenreController extends Controller
                 return $this->response('No queries result', 201);
             }
 
-            return new GenrieResource($result->loadMissing(['movies']));
+            return new GenrieResource($result);
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }
@@ -107,7 +107,7 @@ class GenreController extends Controller
 
             $validator = Validator::make(
                 $movie,
-                $this->genreStoreRequest->rules(),
+                ['description'   => 'required'],
                 $this->genreStoreRequest->messages()
             );
 

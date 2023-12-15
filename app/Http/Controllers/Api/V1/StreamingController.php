@@ -2,25 +2,32 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Controllers\Controller;
+use App\Models\Streaming;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Request\StreamingStoreRequest;
+use App\Http\Resources\V1\StreamingResource;
 
 class StreamingController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    private StreamingStoreRequest $streamingStoreRequest;
+
+    public function __construct()
     {
-        //
+        $this->streamingStoreRequest = new StreamingStoreRequest();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function index(Request $request)
     {
-        //
+        $pageSize = $request->page_size ?? 25;
+
+        return StreamingResource::collection(Streaming::paginate($pageSize))->response();
     }
 
     /**
@@ -28,7 +35,37 @@ class StreamingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+
+            $movie = $request->only([
+                'name'
+            ]);
+
+            $validator = Validator::make(
+                $movie,
+                $this->streamingStoreRequest->rules(),
+                $this->streamingStoreRequest->messages()
+            );
+
+            if ($validator->fails()) {
+                return $this->error(
+                    'Please verify this errors',
+                    422,
+                    $validator->errors(),
+                    $validator->getData()
+                );
+            }
+
+            $create = Streaming::create($validator->validate());
+
+            if ($create) {
+                return $this->response('Streaming created', 201, new StreamingResource($create));
+            }
+
+            return $this->error('Streaming not created', 202);
+        } catch (\Exception $e) {
+            return $this->error('Streaming not created', 500, (array)$e->getMessage());
+        }
     }
 
     /**
@@ -36,7 +73,18 @@ class StreamingController extends Controller
      */
     public function show(string $id)
     {
-        //
+        try {
+            $Streaming = new Streaming();
+            $result = $Streaming->getStreaming($id);
+
+            if (empty($result)) {
+                return $this->response('No queries result', 201);
+            }
+
+            return new StreamingResource($result);
+        } catch (\Exception $e) {
+            return $this->error('Error', 500, (array)$e->getMessage());
+        }
     }
 
     /**
@@ -52,7 +100,44 @@ class StreamingController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            $movie = $request->only([
+                'name'
+            ]);
+
+            $validator = Validator::make(
+                $movie,
+                ['name'   => 'required'],
+                $this->streamingStoreRequest->messages()
+            );
+
+            if ($validator->fails()) {
+                return $this->error(
+                    'Data invalid',
+                    422,
+                    $validator->errors(),
+                    $validator->getData()
+                );
+            }
+            $validate = $validator->validate();
+
+            $Streaming = new Streaming();
+            $result = $Streaming->getStreaming($id);
+
+            if (!$result) return $this->error("No query results for params {$id}.", 202);
+
+            $updated = $result->update([
+                'name'   => $validate['name']
+            ]);
+
+            if ($updated) {
+                return $this->response('Streaming updated', 200, $result);
+            }
+
+            return $this->error('Streaming not updated', 202);
+        } catch (\Exception $e) {
+            return $this->error('Streaming not updated', 500, (array)$e->getMessage());
+        }
     }
 
     /**
@@ -60,6 +145,23 @@ class StreamingController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+
+
+            $Genre = new Streaming();
+            $result = $Genre->getStreaming($id);
+
+            if (!$result) return $this->error("No query results for params {$id}.", 202);
+
+            $deleted = $result->delete();
+
+            if ($deleted) {
+                return $this->response('Streaming deleted', 200, $result);
+            }
+
+            return $this->error('Streaming not deleted', 202);
+        } catch (\Exception $e) {
+            return $this->error('Streaming not deleted', 500, (array)$e->getMessage());
+        }
     }
 }

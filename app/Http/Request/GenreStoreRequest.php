@@ -10,14 +10,14 @@ class GenreStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'description' => 'max:50|unique:genries',
+            'description' => 'required|unique:genries',
         ];
     }
 
     public function messages()
     {
         return [
-            'description.required' => 'Movie title is required.',
+            'description.required' => 'Genre is required.',
             'description.unique' => 'The genre exists in database.'
         ];
     }
