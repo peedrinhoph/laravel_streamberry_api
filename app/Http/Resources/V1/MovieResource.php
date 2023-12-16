@@ -21,17 +21,18 @@ class MovieResource extends JsonResource
 
         return [
             'movie' => [
+                'movie_id'      => $this->id,
                 'title'         => $this->title,
                 'description'   => $this->description,
                 'month'         => Carbon::parse($this->release_date)->format('m'),
                 'year'          => Carbon::parse($this->release_date)->format('Y'),
                 'since'         => Carbon::parse($this->release_date)->diffForHumans(),
-                'vote_average'  => $vote_average ?? 0
+                'vote_average'  => $vote_average ?? 0,
             ],
 
+            'vote'          => MovieRatingResource::collection($this->whenLoaded('vote')),
             'genries'       => GenrieResource::collection($this->whenLoaded('genries')),
             'streamings'    => StreamingResource::collection($this->whenLoaded('streamings')),
-            'vote'          => MovieRatingResource::collection($this->whenLoaded('vote')),
         ];
     }
 }

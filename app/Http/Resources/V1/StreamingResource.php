@@ -18,7 +18,7 @@ class StreamingResource extends JsonResource
     {
 
         return [
-            'id'     => $this->id,
+            'streaming_id'     => $this->id,
             'name'   => $this->name,
             'movies' =>  MovieResource::collection($this->whenLoaded('movies')),
         ];

@@ -29,9 +29,7 @@ class MovieController extends Controller
     {
         $pageSize = $request->page_size ?? 25;
 
-        $movies = Movie::with(['genries', 'vote']);
-
-        return MovieResource::collection($movies->paginate($pageSize));
+        return MovieResource::collection(Movie::paginate($pageSize));
         // return MovieResource::collection(Movie::with('movie_genre')->get());
     }
 
@@ -56,14 +54,6 @@ class MovieController extends Controller
                 $this->movieStoreRequest->messages()
             );
 
-            // $validator = Validator::make($request->all(), [
-            //     'genre_id'      => 'required|array',
-            //     'title'         => 'required',
-            //     'description'   => 'max:255',
-            //     'release_date'  => 'required|date_format:Y-m-d'
-            //     // 'value' => 'required|numeric|between:1,5'
-            // ]);
-
             if ($validator->fails()) {
                 return $this->error(
                     'Please verify this errors',
@@ -74,16 +64,6 @@ class MovieController extends Controller
             }
 
             $create = Movie::create($validator->validate());
-
-            // $movie = Movie::find($create->id);
-
-            // if (!is_array($validator->attributes()['genre_ids'])) throw new Exception('genre_ids is not an array');
-
-            // $movie->genries()->sync($validator->attributes()['genre_ids']);
-
-            // // foreach ($validator->attributes()['genre_id'] as $value) {
-            // //     $movie->genries()->attach($value);
-            // // }
 
             if (!$create) return $this->error('Movie not created', 202);
 
@@ -104,16 +84,14 @@ class MovieController extends Controller
     {
         try {
             $Movie = new Movie();
-            $Vote = new MovieRating();
-            
+
             $result = $Movie->getMovie($id);
-            $result['vote_average'] = $Vote->vote_average($id);
 
             if (empty($result)) {
                 return $this->response('No queries result', 201);
             }
 
-            return new MovieResource($result->loadMissing(['genries', 'vote']));
+            return new MovieResource($result);
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }

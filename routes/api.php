@@ -5,12 +5,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\MovieController;
-use App\Http\Controllers\Api\V1\StreamingMovieController;
 use App\Http\Controllers\Api\V1\StreamingController;
+use App\Http\Controllers\Api\V1\GenreMovieController;
+use App\Http\Controllers\Api\V1\MovieRatedController;
 use App\Http\Controllers\Api\V1\MovieRatingController;
+use App\Http\Controllers\Api\V1\StreamingMovieController;
 
 Route::prefix('v1')->group(function () {
 
+    // Rotas auth com sanctum
     Route::post('/login',       [AuthController::class, 'login']);
     Route::post('/logout',      [AuthController::class, 'logout'])->middleware('auth:sanctum');
     Route::get('/users',        [UserController::class, 'index'])->middleware('auth:sanctum');
@@ -18,36 +21,51 @@ Route::prefix('v1')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
 
-        Route::get('/movies',       [MovieController::class, 'index']);
-        Route::get('/movies/{id}',  [MovieController::class, 'show']);
-        Route::post('/movies',      [MovieController::class, 'store']);
-        Route::put('/movies/{id}',  [MovieController::class, 'update']);
-        Route::delete('/movies/{id}', [MovieController::class, 'destroy']);
+        // Rotas para gerenciar um filme
+        Route::get('/movie/list',       [MovieController::class, 'index']);
+        Route::get('/movie/{movie_id}/find',  [MovieController::class, 'show']);
+        Route::post('/movie/store',      [MovieController::class, 'store']);
+        Route::put('/movie/{movie_id}/update',  [MovieController::class, 'update']);
+        Route::delete('/movie/{movie_id}/delete', [MovieController::class, 'destroy']);
+        
+        // Rota para avaliar um filme
+        Route::post('/movie/{movie_id}/rating',     [MovieRatingController::class, 'store']);
 
-        Route::get('/genries',      [GenreController::class, 'index']);
-        Route::get('/genries/{id}', [GenreController::class, 'show']);
-        Route::post('/genries',     [GenreController::class, 'store']);
-        Route::put('/genries/{id}', [GenreController::class, 'update']);
-        Route::delete('/genries/{id}', [GenreController::class, 'destroy']);
+        // Rotas para gerenciar um gênero
+        Route::get('/genre/list',      [GenreController::class, 'index']);
+        Route::get('/genre/{genre_id}/find', [GenreController::class, 'show']);
+        Route::post('/genre/store',     [GenreController::class, 'store']);
+        Route::put('/genre/{genre_id}/update', [GenreController::class, 'update']);
+        Route::delete('/genre/{genre_id}/delete', [GenreController::class, 'destroy']);
 
-        Route::get('/streamings',       [StreamingController::class, 'index']);
-        Route::get('/streamings/{id}',  [StreamingController::class, 'show']);
-        Route::post('/streamings',      [StreamingController::class, 'store']);
-        Route::put('/streamings/{id}',  [StreamingController::class, 'update']);
-        Route::delete('/streamings/{id}', [StreamingController::class, 'destroy']);
+        // Rotas para gerenciar um streaming
+        Route::get('/streaming/list',       [StreamingController::class, 'index']);
+        Route::get('/streaming/{streaming_id}/find',  [StreamingController::class, 'show']);
+        Route::post('/streaming/store',      [StreamingController::class, 'store']);
+        Route::put('/streaming/{streaming_id}/update',  [StreamingController::class, 'update']);
+        Route::delete('/streaming/{streaming_id}/delete', [StreamingController::class, 'destroy']);
 
-        Route::post('/streaming-movie',      [StreamingMovieController::class, 'create']);
+        // Rota para vincular filmes a um streaming
+        Route::post('/streaming/movie/vincule',      [StreamingMovieController::class, 'create']);
 
-        Route::get('/ratings',      [MovieRatingController::class, 'index']);
-        Route::get('/ratings/{id}', [MovieRatingController::class, 'show']);
-        Route::post('/ratings',     [MovieRatingController::class, 'store']);
-        Route::put('/ratings/{id}', [MovieRatingController::class, 'update']);
-        Route::delete('/ratings/{id}', [MovieRatingController::class, 'destroy']);
+        // Rotas referente a avaliação do filme
+        Route::get('/rating/list',      [MovieRatingController::class, 'index']);
+        Route::get('/rating/{rate_id}/find', [MovieRatingController::class, 'show']);
+        Route::put('/rating/{rate_id}/update', [MovieRatingController::class, 'update']);
+        Route::delete('/rating/{rate_id}/delete', [MovieRatingController::class, 'destroy']);
 
-        Route::get('/straming',      [MovieRatingController::class, 'index']);
-        Route::get('/straming/{id}', [MovieRatingController::class, 'show']);
-        Route::post('/straming',     [MovieRatingController::class, 'store']);
-        Route::put('/straming/{id}', [MovieRatingController::class, 'update']);
-        Route::delete('/straming/{id}', [MovieRatingController::class, 'destroy']);
+        // Rotas para listar filmes por gênero
+        Route::get('/genre/movies/list',      [GenreMovieController::class, 'index']);
+        Route::get('/genre/{genre_id}/movie/find', [GenreMovieController::class, 'show']);
+
+        // Rotas para listar filmes por gênero
+        Route::get('/movies/rated/list',            [MovieRatedController::class, 'index']);
+        Route::get('/movie/rated/{movie_id}/find',  [MovieRatedController::class, 'show']);
+
+        // movie/{movie_id}/changes - Lista os filmes filtrando start_date between end_date ?? default lista ultimas 24 horas
+        // movie/{movie_id}/rating - Lista os filmes, comentários top rated filtrando por nota ?? default lista tudo nota desc
+        // movie/{movie_id}/release - Lista os filmes por mes/ano separados por gênero
+
+        //streaming/
     });
 });

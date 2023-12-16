@@ -33,17 +33,18 @@ class MovieRatingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, string $id)
     {
         try {
 
+            $request['movie_id'] = (int) $id;
             $movie = $request->only([
                 'value',
                 'comment',
                 'user_name',
                 'user_email',
-                'movie_id',
-                'streaming_id'
+                'streaming_id',
+                'movie_id'
             ]);
 
             $validator = Validator::make(
@@ -151,6 +152,23 @@ class MovieRatingController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+
+
+            $Rate = new MovieRating();
+            $result = $Rate->getRating($id);
+
+            if (!$result) return $this->error("No query results for params {$id}.", 202);
+
+            $deleted = $result->delete();
+
+            if ($deleted) {
+                return $this->response('Rate deleted', 200, $result);
+            }
+
+            return $this->error('Rate not deleted', 202);
+        } catch (\Exception $e) {
+            return $this->error('Rate not deleted', 500, (array)$e->getMessage());
+        }
     }
 }

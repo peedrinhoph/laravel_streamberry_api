@@ -19,10 +19,10 @@ class MovieRatingResource extends JsonResource
 
         return [
             'comment' => [
-                'id'            => $this->id,
+                'rate_id'            => $this->id,
                 'value'         => $this->value,
                 'comment'       => $this->comment,
-                'user_name'     => $this->user_name ? $this->user_name : 'Guest',
+                'user_name'     => $this->user_name ? $this->user_name : 'Anonime',
                 'user_email'    => $this->user_email ? $this->user_email : ''
             ],
             // 'streaming'         => StreamingResource::collection($this->whenLoaded('streaming')),
