@@ -16,11 +16,16 @@ class MovieRatingResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        
+
         return [
-            'id'        => $this->id,
-            'value'     => $this->value,
-            'comment'   => $this->comment,
+            'comment' => [
+                'id'            => $this->id,
+                'value'         => $this->value,
+                'comment'       => $this->comment,
+                'user_name'     => $this->user_name ? $this->user_name : 'Guest',
+                'user_email'    => $this->user_email ? $this->user_email : ''
+            ],
+            'streaming'         => StreamingResource::collection($this->whenLoaded('streaming')),
         ];
     }
 }

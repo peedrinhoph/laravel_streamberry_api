@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Streaming;
 
 class MovieRating extends Model
 {
@@ -14,24 +15,23 @@ class MovieRating extends Model
     protected $fillable = [
         'value',
         'comment',
-        'user_id',
+        'user_name',
+        'user_email',
         'movie_id',
-        'streaming_movie_id',
+        'streaming_id',
     ];
 
-
-    public function post()
-    {
-        return $this->belongsTo(StreamingMovie::class, 'streaming_movie_id');
+    public function streaming() {
+        return $this->belongsTo(Streaming::class, 'streaming_id');
     }
 
-    public function user()
+    public function getRating($id)
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->find($id);
     }
 
     public function vote_average($id)
     {
-       return $this::where('movie_id', $id)->avg('value');
+        return $this::where('movie_id', $id)->avg('value');
     }
 }

@@ -75,7 +75,8 @@ class DatabaseSeeder extends Seeder
 
         \App\Models\Streaming::factory()->create(['name' => 'Amazon Prime Videos']);
         \App\Models\Streaming::factory()->create(['name' => 'Netflix']);
-
+        \App\Models\Streaming::factory()->create(['name' => 'HBO Max']);
+        \App\Models\Streaming::factory()->create(['name' => 'Apple Films']);
 
         \App\Models\StreamingMovie::factory()->create(['movie_id' => '1', 'streaming_id' => '1']);
         \App\Models\StreamingMovie::factory()->create(['movie_id' => '1', 'streaming_id' => '2']);
@@ -85,9 +86,9 @@ class DatabaseSeeder extends Seeder
         \App\Models\StreamingMovie::factory()->create(['movie_id' => '5', 'streaming_id' => '2']);
 
 
-        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '1', 'movie_id' => '1', 'user_id' => '1', 'value' => '5', 'comment' => 'Muito bom']);
-        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '2', 'movie_id' => '1', 'user_id' => '1', 'value' => '3', 'comment' => 'Bom']);
-        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '4', 'movie_id' => '3', 'user_id' => '1', 'value' => '5', 'comment' => 'Muito bom']);
-        \App\Models\MovieRating::factory()->create(['streaming_movie_id' => '5', 'movie_id' => '4', 'user_id' => '1', 'value' => '3', 'comment' => 'Bom']);
+        \App\Models\MovieRating::factory()->create(['streaming_id' => '1', 'movie_id' => '1', 'user_name' => 'Pedro Henrique 1', 'user_email' => 'pedro23henrique@hotmail.com', 'value' => '1', 'comment' => 'Bom 1']);
+        \App\Models\MovieRating::factory()->create(['streaming_id' => '1', 'movie_id' => '1', 'user_name' => 'Pedro Henrique 2', 'user_email' => 'pedro23henrique@hotmail.com', 'value' => '2', 'comment' => 'Bom 2']);
+        \App\Models\MovieRating::factory()->create(['streaming_id' => '1', 'movie_id' => '3', 'user_name' => 'Pedro Henrique 3', 'user_email' => 'pedro23henrique@hotmail.com', 'value' => '3', 'comment' => 'Bom 3']);
+        \App\Models\MovieRating::factory()->create(['streaming_id' => '2', 'movie_id' => '4', 'user_name' => 'Pedro Henrique 4', 'user_email' => 'pedro23henrique@hotmail.com', 'value' => '4', 'comment' => 'Bom 4']);
     }
 }

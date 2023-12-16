@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\MovieController;
+use App\Http\Controllers\Api\V1\MovieRatingController;
 use App\Http\Controllers\Api\V1\StreamingController;
 
 Route::prefix('v1')->group(function () {
@@ -35,6 +36,10 @@ Route::prefix('v1')->group(function () {
         Route::put('/streamings/{id}', [StreamingController::class, 'update']);
         Route::delete('/streamings/{id}', [StreamingController::class, 'destroy']);
 
-
+        Route::get('/ratings', [MovieRatingController::class, 'index']);
+        Route::get('/ratings/{id}', [MovieRatingController::class, 'show']);
+        Route::post('/ratings', [MovieRatingController::class, 'store']);
+        Route::put('/ratings/{id}', [MovieRatingController::class, 'update']);
+        Route::delete('/ratings/{id}', [MovieRatingController::class, 'destroy']);
     });
 });

@@ -15,12 +15,14 @@ return new class extends Migration
             $table->id();
             $table->integer('value')->nullable(false);
             $table->string('comment')->nullable();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->string('user_name')->nullable();
+            $table->string('user_email')->nullable();
+            // $table->unsignedBigInteger('user_id');
+            // $table->foreign('user_id')->references('id')->on('users');
             $table->unsignedBigInteger('movie_id');
             $table->foreign('movie_id')->references('id')->on('movies');
-            $table->unsignedBigInteger('streaming_movie_id');
-            $table->foreign('streaming_movie_id')->references('id')->on('streaming_movies');
+            $table->unsignedBigInteger('streaming_id');
+            $table->foreign('streaming_id')->references('id')->on('streamings');
             $table->timestamps();
         });
     }

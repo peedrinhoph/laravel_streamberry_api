@@ -23,26 +23,32 @@ class Movie extends Model
 
     public function streamings()
     {
-        return $this->belongsToMany(Streaming::class
-        , 'streaming_movies'
-        , 'movie_id'
-        , 'streaming_id');
+        return $this->belongsToMany(
+            Streaming::class,
+            'streaming_movies',
+            'movie_id',
+            'streaming_id'
+        );
     }
+
+    // public function vote()
+    // {
+    //     return $this->belongsToMany(MovieRating::class
+    //     , 'streaming_movies'
+    //     , 'movie_id'
+    //     , 'id'
+    //     , ''
+    //     , 'streaming_movie_id'
+    //     );
+    // }
 
     public function vote()
     {
-        return $this->belongsToMany(MovieRating::class
-        , 'streaming_movies'
-        , 'movie_id'
-        , 'id'
-        , ''
-        , 'streaming_movie_id'
-        );
+        return $this->hasMany(MovieRating::class);
     }
 
     public function getMovie($id)
     {
         return $this->where('id', $id)->first();
     }
-    
 }
