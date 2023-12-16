@@ -20,6 +20,7 @@ class GenrieResource extends JsonResource
         return [
             'id'            => $this->id,
             'description'   => $this->description,
+            'movies' =>  MovieResource::collection($this->whenLoaded('movies')),
         ];
     }
 }

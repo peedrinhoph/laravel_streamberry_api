@@ -28,7 +28,7 @@ class StreamingController extends Controller
     {
         $pageSize = $request->page_size ?? 25;
 
-        return StreamingResource::collection(Streaming::paginate($pageSize))->response();
+        return StreamingResource::collection(Streaming::paginate($pageSize));
     }
 
     /**

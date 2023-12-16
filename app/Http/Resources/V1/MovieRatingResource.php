@@ -25,7 +25,7 @@ class MovieRatingResource extends JsonResource
                 'user_name'     => $this->user_name ? $this->user_name : 'Guest',
                 'user_email'    => $this->user_email ? $this->user_email : ''
             ],
-            'streaming'         => StreamingResource::collection($this->whenLoaded('streaming')),
+            // 'streaming'         => StreamingResource::collection($this->whenLoaded('streaming')),
         ];
     }
 }

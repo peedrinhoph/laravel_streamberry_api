@@ -3,6 +3,7 @@
 namespace App\Http\Resources\V1;
 
 use Carbon\Carbon;
+use App\Models\MovieRating;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,14 +16,9 @@ class MovieResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $Vote = new MovieRating();
+        $vote_average = $Vote->vote_average($this->id);
 
-        // $vote_average = MovieRatingResource::collection($this->whenLoaded('vote'));
-        // dd($vote_average->items());
-        // foreach ($vote_average as $value) {
-        //     var_dump($value);
-        // }
-        // dd('here');
-        
         return [
             'movie' => [
                 'title'         => $this->title,
@@ -30,7 +26,7 @@ class MovieResource extends JsonResource
                 'month'         => Carbon::parse($this->release_date)->format('m'),
                 'year'          => Carbon::parse($this->release_date)->format('Y'),
                 'since'         => Carbon::parse($this->release_date)->diffForHumans(),
-                'vote_average'  => $this->vote_average ?? 0
+                'vote_average'  => $vote_average ?? 0
             ],
 
             'genries'       => GenrieResource::collection($this->whenLoaded('genries')),

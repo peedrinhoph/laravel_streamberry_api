@@ -27,7 +27,9 @@ class GenreController extends Controller
     {
         $pageSize = $request->page_size ?? 25;
 
-        return GenrieResource::collection(Genrie::paginate($pageSize))->response();
+        $genries = Genrie::with(['movies']);
+
+        return GenrieResource::collection($genries->paginate($pageSize));
     }
 
     /**
@@ -81,7 +83,7 @@ class GenreController extends Controller
                 return $this->response('No queries result', 201);
             }
 
-            return new GenrieResource($result);
+            return new GenrieResource($result->loadMissing(['movies']));
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }

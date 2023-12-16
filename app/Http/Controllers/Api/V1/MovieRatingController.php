@@ -27,7 +27,7 @@ class MovieRatingController extends Controller
     {
         $pageSize = $request->page_size ?? 25;
 
-        return MovieRatingResource::collection(MovieRating::paginate($pageSize))->response();
+        return MovieRatingResource::collection(MovieRating::paginate($pageSize));
     }
 
     /**
