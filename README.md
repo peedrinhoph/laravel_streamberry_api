@@ -52,3 +52,8 @@ curl -X POST -H "Authorization: Bearer {token}" http://localhost/api/v1/logout
 - Criar um streaming: `POST api/v1/streaming/store`
 - Deletar um streaming: `DELETE api/v1/streaming/{streaming_id}/delete`
 
+Gere uma documentação de API para estas rotas do laravel
+
+colocar as rotas
+
+Você pode me mostrar um exemplo de uso dessas rotas?

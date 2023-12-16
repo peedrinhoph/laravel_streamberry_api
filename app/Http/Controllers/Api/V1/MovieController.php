@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Models\Movie;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\V1\MovieResource;
-use App\Traits\HttpResponses;
 use Exception;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Request\MovieStoreRequest;
+use App\Models\Movie;
 use App\Models\MovieRating;
+use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
+use App\Http\Request\MovieStoreRequest;
+use App\Http\Resources\V1\MovieResource;
+use Illuminate\Support\Facades\Validator;
 
 class MovieController extends Controller
 {
@@ -63,13 +64,23 @@ class MovieController extends Controller
                 );
             }
 
-            $create = Movie::create($validator->validate());
+            $create = DB::transaction(function () use ($validator) {
+                $create = Movie::create($validator->validate());
+                
+                if ($genreIds = data_get($validator->attributes(), 'genre_ids')) {
+                    $create->genries()->sync($genreIds);
+                }
+
+                return $create;
+            });
+
+            // Movie::create($validator->validate());
 
             if (!$create) return $this->error('Movie not created', 202);
 
-            if ($genreIds = data_get($validator->attributes(), 'genre_ids')) {
-                $create->genries()->sync($genreIds);
-            }
+            // if ($genreIds = data_get($validator->attributes(), 'genre_ids')) {
+            //     $create->genries()->sync($genreIds);
+            // }
 
             return $this->response('Movie created', 201, new MovieResource($create->load('genries')));
         } catch (\Exception $e) {

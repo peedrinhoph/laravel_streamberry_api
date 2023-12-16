@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\MovieController;
 use App\Http\Controllers\Api\V1\StreamingController;
 use App\Http\Controllers\Api\V1\GenreMovieController;
-use App\Http\Controllers\Api\V1\MovieRatedController;
+use App\Http\Controllers\Api\V1\MovieSearchController;
 use App\Http\Controllers\Api\V1\MovieRatingController;
 use App\Http\Controllers\Api\V1\StreamingMovieController;
 
@@ -59,8 +59,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/genre/{genre_id}/movie/find', [GenreMovieController::class, 'show']);
 
         // Rotas para listar filmes por gênero
-        Route::get('/movies/rated/list',            [MovieRatedController::class, 'index']);
-        Route::get('/movie/rated/{movie_id}/find',  [MovieRatedController::class, 'show']);
+        Route::get('/movies/list',            [MovieSearchController::class, 'index']);
+        Route::get('/movie/{movie_id}/find',  [MovieSearchController::class, 'show']);
+        Route::get('/movie/search',  [MovieSearchController::class, 'search']);
 
         // movie/{movie_id}/changes - Lista os filmes filtrando start_date between end_date ?? default lista ultimas 24 horas
         // movie/{movie_id}/rating - Lista os filmes, comentários top rated filtrando por nota ?? default lista tudo nota desc
