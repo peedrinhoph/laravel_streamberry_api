@@ -76,13 +76,13 @@ class Movie extends Model
 
     public function retornaMovies($filtros)
     {
-        $retorno = $this->with(['genries', 'vote'])
-            ->withCount([
-                'vote' => function ($query) {
-                    $query->select(DB::raw("avg(value)"));
-                }
-            ]);
-
+        $retorno = $this->with(['genries', 'vote', 'streamings'])
+            // ->addSelect([
+            //     'vote_average' => MovieRating::select(DB::raw('round(AVG(value),0) as vote_average'))
+            //         ->whereColumn('movie_id', '=', 'movies.id')
+            //         ->groupBy('movie_id')
+            // ])
+        ;
 
         if (is_array($filtros)) {
 
@@ -101,12 +101,12 @@ class Movie extends Model
                         if ($valor) $retorno->where('movies.release_date', '<=', Carbon::parse($valor)->format('Y-m-d'));
                         break;
 
+                    case 'movies_per_year':
+                        if ($valor) $retorno->where(DB::raw("date_format(movies.release_date, '%Y')"), '=', Carbon::parse($valor)->format('Y'));
+                        break;
+
                     case 'vote_average':
-                        if ($valor) $retorno->where(
-                            function (Builder $query) {
-                                $query->selectRaw('movie_rating.avg(value)')->from('movie_rating')->where('movie_rating.movie_id', '=', 'movies.id');
-                            }
-                        );
+                        if ($valor) $retorno->whereRaw('(select avg(value) from movie_rating where movie_rating.movie_id = movies.id group by movie_id) >= ' . $valor);
                         break;
                 }
             }

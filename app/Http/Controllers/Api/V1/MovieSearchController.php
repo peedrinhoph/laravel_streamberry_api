@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Models\Movie;
+use App\Models\Genrie;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\MovieResource;
+use App\Http\Resources\V1\GenrieResource;
 
 class MovieSearchController extends Controller
 {
@@ -58,7 +60,6 @@ class MovieSearchController extends Controller
             $pageSize = $request->page_size ?? 25;
 
             $Movie = new Movie();
-            // dd($request->all());
             $result = $Movie->retornaMovies($request->all())->paginate($pageSize);
             if (empty($result)) {
                 return $this->response('No queries result', 201);
@@ -68,5 +69,29 @@ class MovieSearchController extends Controller
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }
+    }
+
+    public function release(Request $request)
+    {
+        try {
+            $pageSize = $request->page_size ?? 25;
+
+            $Movie = new Movie();
+            $result = $Movie->retornaMoviesPerYear($request->all())->paginate($pageSize);
+            if (empty($result)) {
+                return $this->response('No queries result', 201);
+            }
+            
+            return MovieResource::collection($result);
+        } catch (\Exception $e) {
+            return $this->error('Error', 500, (array)$e->getMessage());
+        }
+    }
+
+    public function genre(Request $request)
+    {
+        $pageSize = $request->page_size ?? 25;
+
+        return GenrieResource::collection(Genrie::with(['movies'])->paginate($pageSize));
     }
 }

@@ -58,15 +58,18 @@ Route::prefix('v1')->group(function () {
         Route::get('/genre/movies/list',      [GenreMovieController::class, 'index']);
         Route::get('/genre/{genre_id}/movie/find', [GenreMovieController::class, 'show']);
 
-        // Rotas para listar filmes por gênero
+        // Rotas para listar filmes
         Route::get('/movies/list',            [MovieSearchController::class, 'index']);
         Route::get('/movie/{movie_id}/find',  [MovieSearchController::class, 'show']);
+        
+        // Rota '/movie/search' expect the params: 
+        // (integer) vote_average, 
+        // (string) title, 
+        // (string) genre, 
+        // (date 'Y-m-d') release_date_start, 
+        // (date 'Y-m-d') release_date_start, 
+        // (asc or desc) order_by_release_date
         Route::get('/movie/search',  [MovieSearchController::class, 'search']);
 
-        // movie/{movie_id}/changes - Lista os filmes filtrando start_date between end_date ?? default lista ultimas 24 horas
-        // movie/{movie_id}/rating - Lista os filmes, comentários top rated filtrando por nota ?? default lista tudo nota desc
-        // movie/{movie_id}/release - Lista os filmes por mes/ano separados por gênero
-
-        //streaming/
     });
 });
