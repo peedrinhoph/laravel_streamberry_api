@@ -19,10 +19,10 @@ class UserResource extends JsonResource
     {
         // return parent::toArray($request);
         return [
-            'name' => $this->name,
+            'name'  => $this->name,
             'email' => $this->email,
             'month' => Carbon::parse($this->created_at)->format('m'),
-            'year' => Carbon::parse($this->created_at)->format('Y'),
+            'year'  => Carbon::parse($this->created_at)->format('Y'),
             'since' => Carbon::parse($this->created_at)->diffForHumans()
         ];
     }

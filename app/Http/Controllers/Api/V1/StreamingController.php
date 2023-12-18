@@ -82,7 +82,7 @@ class StreamingController extends Controller
                 return $this->response('No queries result', 201);
             }
 
-            return new StreamingResource($result->loadMissing(['movies']));
+            return new StreamingResource($result);
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use PhpParser\Node\Stmt\Break_;
 
 class Movie extends Model
 {
@@ -101,6 +102,11 @@ class Movie extends Model
                         if ($valor) $retorno->where('movies.release_date', '<=', Carbon::parse($valor)->format('Y-m-d'));
                         break;
 
+                    case 'release_date_between':
+                        $between = explode(",", $valor);
+                        if ($between) $retorno->whereBetween('movies.release_date', [$between]);
+                        break;
+
                     case 'movies_per_year':
                         if ($valor) $retorno->where(DB::raw("date_format(movies.release_date, '%Y')"), '=', Carbon::parse($valor)->format('Y'));
                         break;
@@ -123,7 +129,7 @@ class Movie extends Model
                 }
             }
         }
-        // dd($retorno->get());
+
         return $retorno;
     }
 }

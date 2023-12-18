@@ -18,9 +18,9 @@ class MovieResource extends JsonResource
     public function toArray(Request $request): array
     {
         $streamings_release = $this->streamings()->count();
-        $vote_total     = $this->vote()->count();
-        $vote_average   = $this->vote()->avg('value');
-        $genries        = $this->genries()->get()->pluck('description');
+        $vote_total         = $this->vote()->count();
+        $vote_average       = $this->vote()->avg('value');
+        $genries            = implode(", ", $this->genries()->get()->pluck('description')->toArray());
 
         return [
             'movie' => [
