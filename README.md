@@ -41,3 +41,7 @@ DB_PASSWORD=
 ```
 php artisan serve
 ```
+
+## Testes implementados no Endpoint de Movie
+
+- Necessário fazer o login para usar o `plainTextToken` no header das requisições de teste.
