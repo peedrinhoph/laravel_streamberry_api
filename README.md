@@ -46,4 +46,4 @@ php artisan serve
 
 - Necessário fazer o login para usar o `plainTextToken` no header das requisições de teste.
 
-![Alt text](/imgGit/tests.png "Optional title")
+![Alt text](/imgGit/test.png "Optional title")
