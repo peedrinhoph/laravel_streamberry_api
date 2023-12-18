@@ -30,11 +30,13 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 ## No diretório do projeto 
-[x] Execute o comando `composer install` para instalar as dependências do projeto
-[x] Execute o comando `php artisan key:generate` para configurar a chave do sistema
-[x] Execute o comando `php artisan migrate` para fazer criação das tabelas no banco de dados
-[x] Execute o comando `php artisan db:seed` para inicializar alguns registros para o sistema funcionar, incluindo o usuário e senha para autenticação da API (dados que constam na documentação)
+- Execute o comando `composer install` para instalar as dependências do projeto
+- Execute o comando `php artisan key:generate` para configurar a chave do sistema
+- Execute o comando `php artisan migrate` para fazer criação das tabelas no banco de dados
+- Execute o comando `php artisan db:seed` para inicializar alguns registros para o sistema funcionar, incluindo o usuário e senha para autenticação da API (dados que constam na documentação)
+
+## Inicializando o sistema com artisan
 
 ```
-Todos os passos concluídos execute o comando `php artisan serve` para inicializar o servidor da aplicação 
+php artisan serve
 ```
