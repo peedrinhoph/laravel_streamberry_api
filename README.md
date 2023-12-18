@@ -14,7 +14,8 @@ Composer
 Banco de dados MYSQL
 ```
 
-# Clone o repositório
+# Configurações
+- Clone o repositório
 
 ```
 git clone https://github.com/peedrinhoph/laravel_streamberry_api.git ./
