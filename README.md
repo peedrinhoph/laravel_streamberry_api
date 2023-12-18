@@ -45,3 +45,5 @@ php artisan serve
 ## Testes implementados no Endpoint de Movie
 
 - Necessário fazer o login para usar o `plainTextToken` no header das requisições de teste.
+
+![Alt text](/imgGit/tests.png "Optional title")
