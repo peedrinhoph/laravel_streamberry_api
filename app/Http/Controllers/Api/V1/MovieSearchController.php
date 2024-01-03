@@ -48,7 +48,7 @@ class MovieSearchController extends Controller
                 return $this->response('No queries result', 201);
             }
 
-            return new MovieResource($result->loadMissing(['genries', 'vote', 'streamings']));
+            return new MovieResource($result->loadMissing(['genries', 'vote', 'streamings'])->loadCount('vote'));
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());
         }
@@ -60,7 +60,7 @@ class MovieSearchController extends Controller
             $pageSize = $request->page_size ?? 25;
 
             $Movie = new Movie();
-            $result = $Movie->retornaMovies($request->all())->paginate($pageSize);
+            $result = $Movie->retornaMovies($request->all())->paginate($pageSize)->loadCount('vote');
             if (empty($result)) {
                 return $this->response('No queries result', 201);
             }
@@ -81,7 +81,7 @@ class MovieSearchController extends Controller
             if (empty($result)) {
                 return $this->response('No queries result', 201);
             }
-            
+
             return MovieResource::collection($result);
         } catch (\Exception $e) {
             return $this->error('Error', 500, (array)$e->getMessage());

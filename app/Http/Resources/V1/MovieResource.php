@@ -10,6 +10,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class MovieResource extends JsonResource
 {
+    private function column($request, $column): bool
+    {
+        if (!$request->has('columns')) return true;
+
+        return str($request->get('columns'))->contains($column);
+    }
     /**
      * Transform the resource into an array.
      *
@@ -24,7 +30,10 @@ class MovieResource extends JsonResource
 
         return [
             'movie' => [
-                'movie_id'      => $this->id,
+                'movie_id'      => $this->when(
+                    $this->column($request, 'id'),
+                    $this->id
+                ),
                 'title'         => $this->title,
                 'description'   => $this->description,
                 'month'         => Carbon::parse($this->release_date)->format('m'),
@@ -32,7 +41,9 @@ class MovieResource extends JsonResource
                 'since'         => Carbon::parse($this->release_date)->diffForHumans(),
                 'vote_average'  => number_format($vote_average, 1) ?? 0,
                 'vote_total'    => number_format($vote_total) ?? 0,
+                'vote_total_using_loadCount'   => $this->whenCounted('vote'),
                 'streamings_release'  => number_format($streamings_release) ?? 0,
+                'release_streamings'  => $this->whenCounted('streamings') ?? 0,
                 'genries_string' => $genries
             ],
 

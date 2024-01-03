@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\DTO\MovieDTO;
 use Exception;
 use App\Models\Movie;
 use App\Models\MovieRating;
@@ -9,7 +10,7 @@ use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Request\MovieStoreRequest;
+use App\Http\Requests\MovieStoreRequest;
 use App\Http\Resources\V1\MovieResource;
 use Illuminate\Support\Facades\Validator;
 
@@ -40,7 +41,7 @@ class MovieController extends Controller
     public function store(Request $request)
     {
         try {
-
+            /* VALIDAÇÃO E CRIAÇÃO COM REQUEST
             $movie = $request->only([
                 'genre_id',
                 'title',
@@ -66,15 +67,43 @@ class MovieController extends Controller
 
             $create = DB::transaction(function () use ($validator) {
                 $create = Movie::create($validator->validate());
-                
+
                 if ($genreIds = data_get($validator->attributes(), 'genre_ids')) {
                     $create->genries()->sync($genreIds);
                 }
 
                 return $create;
             });
+            FIM VALIDAÇÃO COM REQUEST */
 
-            // Movie::create($validator->validate());
+            /**VALIDAÇÃO E CRIAÇÃO VIA DTO */
+            // $dto = new MovieDTO(
+            //     data_get($request, 'title'),
+            //     data_get($request, 'description'),
+            //     data_get($request, 'release_date'),
+            //     data_get($request, 'genre_ids')
+            // );
+
+            $dto = new MovieDTO(
+                ...$request->only([
+                    'title',
+                    'description',
+                    'release_date',
+                    'genre_ids'
+                ])
+            );
+
+
+            $create = DB::transaction(function () use ($dto) {
+                $create = Movie::create($dto->validate());
+
+                if ($genreIds = data_get($dto, 'genre_ids')) {
+                    $create->genries()->sync($genreIds);
+                }
+
+                return $create;
+            });
+            /**FIM VALIDAÇÃO COM DTO */
 
             if (!$create) return $this->error('Movie not created', 202);
 

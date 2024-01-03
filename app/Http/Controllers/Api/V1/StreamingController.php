@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Request\StreamingStoreRequest;
+use App\Http\Requests\StreamingStoreRequest;
 use App\Http\Resources\V1\StreamingResource;
 use App\Repositories\StreamingRepository;
 

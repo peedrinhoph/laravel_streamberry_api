@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Request\MovieRatingStoreRequest;
+use App\Http\Requests\MovieRatingStoreRequest;
 use App\Http\Resources\V1\MovieRatingResource;
 
 class MovieRatingController extends Controller

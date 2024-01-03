@@ -6,7 +6,7 @@ use App\Models\Genrie;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use App\Http\Controllers\Controller;
-use App\Http\Request\GenreStoreRequest;
+use App\Http\Requests\GenreStoreRequest;
 use App\Http\Resources\V1\GenrieResource;
 use Illuminate\Support\Facades\Validator;
 
