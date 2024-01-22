@@ -91,7 +91,14 @@ class Movie extends Model
 
                 switch ($campo) {
                     case 'title':
-                        if ($valor) $retorno->where('movies.title', 'LIKE', "%$valor%");
+                        if ($valor)
+                            $retorno->where('movies.title', 'LIKE', "%$valor%");
+                            // $retorno->when($valor->filled(), function (Builder $q, $valor) {
+                            //     return $q->where(function (Builder $q, $valor) {
+                            //         return $q->where('movies.title', 'LIKE', "%$valor%")
+                            //             ->orWhere('movies.description', 'LIKE', "%$valor%");
+                            //     });
+                            // });
                         break;
 
                     case 'release_date_start':
@@ -124,7 +131,7 @@ class Movie extends Model
 
                 switch ($order) {
                     case 'order_by_release_date':
-                        $retorno->orderBy("movies.release_date", $dir);
+                        $retorno->orderBy("movies.release_date", $dir ?: 'asc');
                         break;
                 }
             }

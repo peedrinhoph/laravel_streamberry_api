@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MovieStoreRequest;
 use App\Http\Resources\V1\MovieResource;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class MovieController extends Controller
 {
@@ -128,7 +129,7 @@ class MovieController extends Controller
             $result = $Movie->getMovie($id);
 
             if (empty($result)) {
-                return $this->response('No queries result', 201);
+                return $this->response('No queries result', Response::HTTP_ACCEPTED);
             }
 
             return new MovieResource($result);
