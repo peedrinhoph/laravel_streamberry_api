@@ -7,16 +7,18 @@ use App\Http\Controllers\Api\V1\GenreController;
 use App\Http\Controllers\Api\V1\MovieController;
 use App\Http\Controllers\Api\V1\StreamingController;
 use App\Http\Controllers\Api\V1\GenreMovieController;
-use App\Http\Controllers\Api\V1\MovieSearchController;
+use App\Http\Controllers\Api\V1\ExternalApiController;
 use App\Http\Controllers\Api\V1\MovieRatingController;
+use App\Http\Controllers\Api\V1\MovieSearchController;
 use App\Http\Controllers\Api\V1\StreamingMovieController;
 
 Route::prefix('v1')->group(function () {
-
+    // Consumindo uma api externa
+    Route::get('/readExternalApi', ExternalApiController::class);
     // Rotas auth com sanctum
     Route::post('/login',       [AuthController::class, 'login']);
     Route::post('/logout',      [AuthController::class, 'logout'])->middleware('auth:sanctum');
-    Route::get('/users',        [UserController::class, 'index'])->middleware('auth:sanctum');
+    Route::get('/users',        [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show'])->middleware('auth:sanctum');
 
     Route::middleware('auth:sanctum')->group(function () {
