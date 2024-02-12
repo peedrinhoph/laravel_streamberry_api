@@ -18,4 +18,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/testGetDanfe',       [HomeController::class, 'testGetDanfe']);
+// Route::get('/',       [HomeController::class, 'index']);
