@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\MovieController;
 use App\Http\Controllers\Api\V1\StreamingController;
 use App\Http\Controllers\Api\V1\GenreMovieController;
 use App\Http\Controllers\Api\V1\ExternalApiController;
+use App\Http\Controllers\Api\V1\MakePdfNfeDanfe;
 use App\Http\Controllers\Api\V1\MovieRatingController;
 use App\Http\Controllers\Api\V1\MovieSearchController;
 use App\Http\Controllers\Api\V1\StreamingMovieController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\Api\V1\StreamingMovieController;
 Route::prefix('v1')->group(function () {
     // Consumindo uma api externa
     Route::get('/readExternalApi', ExternalApiController::class);
+    Route::get('/nfeDanfePdf', MakePdfNfeDanfe::class);
     // Rotas auth com sanctum
     Route::post('/login',       [AuthController::class, 'login']);
     Route::post('/logout',      [AuthController::class, 'logout'])->middleware('auth:sanctum');
@@ -29,7 +31,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/movie/store',      [MovieController::class, 'store']);
         Route::put('/movie/{movie_id}/update',  [MovieController::class, 'update']);
         Route::delete('/movie/{movie_id}/delete', [MovieController::class, 'destroy']);
-        
+
         // Rota para avaliar um filme
         Route::post('/movie/{movie_id}/rating',     [MovieRatingController::class, 'store']);
 
@@ -63,7 +65,7 @@ Route::prefix('v1')->group(function () {
         // Rotas para listar filmes
         Route::get('/movies/list',            [MovieSearchController::class, 'index']);
         Route::get('/movie/{movie_id}/find',  [MovieSearchController::class, 'show']);
-        
+
         // Rota '/movie/search' expect the params: 
         // (integer) vote_average, 
         // (string) title, 
@@ -72,6 +74,5 @@ Route::prefix('v1')->group(function () {
         // (date 'Y-m-d') release_date_start, 
         // (asc or desc) order_by_release_date
         Route::get('/movie/search',  [MovieSearchController::class, 'search']);
-
     });
 });
