@@ -42,7 +42,7 @@ class MovieController extends Controller
     public function store(Request $request)
     {
         try {
-            /* VALIDAÇÃO E CRIAÇÃO COM REQUEST
+            /* VALIDAÇÃO E CRIAÇÃO COM REQUEST */
             $movie = $request->only([
                 'genre_id',
                 'title',
@@ -75,7 +75,7 @@ class MovieController extends Controller
 
                 return $create;
             });
-            FIM VALIDAÇÃO COM REQUEST */
+            /* FIM VALIDAÇÃO COM REQUEST */
 
             /**VALIDAÇÃO E CRIAÇÃO VIA DTO */
             // $dto = new MovieDTO(
@@ -85,25 +85,25 @@ class MovieController extends Controller
             //     data_get($request, 'genre_ids')
             // );
 
-            $dto = new MovieDTO(
-                ...$request->only([
-                    'title',
-                    'description',
-                    'release_date',
-                    'genre_ids'
-                ])
-            );
+            // $dto = new MovieDTO(
+            //     ...$request->only([
+            //         'title',
+            //         'description',
+            //         'release_date',
+            //         'genre_ids'
+            //     ])
+            // );
 
 
-            $create = DB::transaction(function () use ($dto) {
-                $create = Movie::create($dto->validate());
+            // $create = DB::transaction(function () use ($dto) {
+            //     $create = Movie::create($dto->validate());
 
-                if ($genreIds = data_get($dto, 'genre_ids')) {
-                    $create->genries()->sync($genreIds);
-                }
+            //     if ($genreIds = data_get($dto, 'genre_ids')) {
+            //         $create->genries()->sync($genreIds);
+            //     }
 
-                return $create;
-            });
+            //     return $create;
+            // });
             /**FIM VALIDAÇÃO COM DTO */
 
             if (!$create) return $this->error('Movie not created', 202);

@@ -33,30 +33,30 @@ class GenreController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(GenreStoreRequest $request)
     {
         try {
 
-            $movie = $request->only([
-                'description'
-            ]);
+            // $movie = $request->only([
+            //     'description'
+            // ]);
 
-            $validator = Validator::make(
-                $movie,
-                $this->genreStoreRequest->rules(),
-                $this->genreStoreRequest->messages()
-            );
+            // $validator = Validator::make(
+            //     $movie,
+            //     $this->genreStoreRequest->rules(),
+            //     $this->genreStoreRequest->messages()
+            // );
 
-            if ($validator->fails()) {
-                return $this->error(
-                    'Please verify this errors',
-                    422,
-                    $validator->errors(),
-                    $validator->getData()
-                );
-            }
+            // if ($validator->fails()) {
+            //     return $this->error(
+            //         'Please verify this errors',
+            //         422,
+            //         $validator->errors(),
+            //         $validator->getData()
+            //     );
+            // }
 
-            $create = Genrie::create($validator->validate());
+            $create = Genrie::create($request->validated());
 
             if ($create) {
                 return $this->response('Genrie created', 201, new GenrieResource($create));
@@ -90,28 +90,11 @@ class GenreController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(GenreStoreRequest $request, string $id)
     {
         try {
-            $movie = $request->only([
-                'description'
-            ]);
-
-            $validator = Validator::make(
-                $movie,
-                ['description'   => 'required'],
-                $this->genreStoreRequest->messages()
-            );
-
-            if ($validator->fails()) {
-                return $this->error(
-                    'Data invalid',
-                    422,
-                    $validator->errors(),
-                    $validator->getData()
-                );
-            }
-            $validate = $validator->validate();
+            
+            $validate = $request->validated();
 
             $Genrie = new Genrie();
             $result = $Genrie->getGenre($id);
