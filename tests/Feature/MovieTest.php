@@ -6,6 +6,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 
 class MovieTest extends TestCase
 {
@@ -15,6 +16,9 @@ class MovieTest extends TestCase
 
     public function test_movie_list_all(): void
     {
+        Artisan::call('migrate:refresh');
+        Artisan::call('db:seed');
+
         $response = $this->getJson('/api/v1/movie/list?page_size=1', [
             'Authorization' => 'Bearer 1|0N4yeuzy6aLlydWXUHvJWzxBVqWf0sqJbJoXZLbJ51566a59',
             'Accept' => 'application/json',

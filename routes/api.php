@@ -23,7 +23,7 @@ Route::prefix('v1')->group(function () {
     Route::get('/users',        [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show'])->middleware('auth:sanctum');
 
-    Route::middleware('auth:sanctum')->group(function () {
+    // Route::middleware('auth:sanctum')->group(function () {
 
         // Rotas para gerenciar um filme
         Route::get('/movie/list',       [MovieController::class, 'index']);
@@ -74,5 +74,5 @@ Route::prefix('v1')->group(function () {
         // (date 'Y-m-d') release_date_start, 
         // (asc or desc) order_by_release_date
         Route::get('/movie/search',  [MovieSearchController::class, 'search']);
-    });
+    // });
 });

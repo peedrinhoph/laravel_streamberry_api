@@ -11,7 +11,7 @@ class MovieStoreRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -40,5 +40,10 @@ class MovieStoreRequest extends FormRequest
             'genre_ids.array' => 'Please enter a array for genre_ids.',
             'genre_ids.required' => 'Please enter one or more genre_ids, field is required.'
         ];
+    }
+
+    protected function prepareForValidation()
+    {
+        return $this->merge([$this->get('description') . ' - ' . $this->get('title')]);
     }
 }
