@@ -28,7 +28,7 @@ Route::prefix('v1')->group(function () {
         // Rotas para gerenciar um filme
         Route::get('/movie/list',       [MovieController::class, 'index']);
         Route::get('/movie/{movie_id}/find',  [MovieController::class, 'show']);
-        Route::post('/movie/store',      [MovieController::class, 'store']);
+        Route::post('/movie/store',      [MovieController::class, 'store'])->name('register.movie');
         Route::put('/movie/{movie_id}/update',  [MovieController::class, 'update']);
         Route::delete('/movie/{movie_id}/delete', [MovieController::class, 'destroy']);
 

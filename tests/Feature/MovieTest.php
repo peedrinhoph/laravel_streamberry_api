@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -13,6 +14,7 @@ class MovieTest extends TestCase
     /**
      * A basic feature test example.
      */
+    // use DatabaseTransactions;
 
     public function test_movie_list_all(): void
     {
@@ -29,9 +31,34 @@ class MovieTest extends TestCase
         $response->assertJsonCount(3);
     }
 
+    public function test_title_should_be_required()
+    {
+        $response = $this->postJson(
+            route('register.movie'),
+            []
+        );
+        // dd(session()->all());
+        $response->assertInvalid(['title' => 'Movie title is required.']);
+    }
+
+    public function test_description_should_have_a_max_off_255_characters()
+    {
+        $this->post(
+            route('register.movie'),
+            [
+                'description' => str_repeat('a', 256),
+            ]
+        )
+            // ->assertSessionHasErrors(['description' => __('validation.max.string', ['atribute' => 'description', 'max' => 255])])
+            ->assertInvalid([
+                'description' => 'The description field must not be greater than 255 characters.'
+            ]);
+    }
+
     public function test_movie_create(): void
     {
         $response = $this->postJson(
+            // route('api.movie.store'),
             '/api/v1/movie/store',
             [
                 'title' => 'Teste de filme',
