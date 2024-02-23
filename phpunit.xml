@@ -12,17 +12,27 @@
             <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
-    <source>
+    <!-- <source>
         <include>
             <directory>app</directory>
         </include>
-    </source>
+    </source> -->
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory>app</directory>
+        </include>
+        <report>
+            <html outputDirectory="reports/coverage" />
+        </report>
+    </coverage>
     <php>
         <env name="APP_ENV" value="testing"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="CACHE_DRIVER" value="array"/>
         <env name="DB_CONNECTION" value="mysql"/>
         <env name="DB_DATABASE" value="laravel"/>
+        <!-- <env name="DB_CONNECTION" value="sqlite"/>
+        <env name="DB_DATABASE" value=":memory:"/> -->
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
