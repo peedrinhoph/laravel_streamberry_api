@@ -18,4 +18,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::get('/',       [HomeController::class, 'index']);
+Route::get('/teste',       [HomeController::class, 'index']);
