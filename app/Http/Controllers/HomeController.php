@@ -9,6 +9,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        dd('hello');
+        $x = 'teste';
+        return response($x);
     }
 }
