@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +19,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/teste',       [HomeController::class, 'index']);
+Route::singleton('profile', ProfileController::class);
+
+Route::domain('localhost')->group(function () {
+    Route::get('/teste',       [HomeController::class, 'index']);
+});
